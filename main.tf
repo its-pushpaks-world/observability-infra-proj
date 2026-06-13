@@ -21,6 +21,7 @@ module "network" {
 }
 
 # 2. Deploy Tomcat Server Instance
+# 2. Deploy Tomcat Server Instance
 module "tomcat_node" {
   source        = "git::https://github.com/its-pushpaks-world/terraform-modules.git//ec2-instance?ref=main"
   instance_name = "free-tomcat-app"
@@ -31,7 +32,29 @@ module "tomcat_node" {
               #!/bin/bash
               sudo apt-get update -y
               sudo apt-get install default-jdk -y
-              # Install OpenTelemetry Collector Contrib
+              
+              # 1. Install Tomcat 9
+              sudo apt-get install tomcat9 tomcat9-admin -y
+              
+              # 2. Download Prometheus JMX Exporter for metrics
+              sudo wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.19.0/jmx_prometheus_javaagent-0.19.0.jar -O /usr/share/tomcat9/lib/jmx_prometheus_javaagent.jar
+              
+              # 3. Create a basic JMX config file for Prometheus
+              sudo cat <<EOT > /usr/share/tomcat9/lib/tomcat.yml
+              ---
+              lowercaseOutputLabelNames: true
+              lowercaseOutputName: true
+              rules:
+              - pattern: ".*"
+              EOT
+              
+              # 4. Bind the Java Agent to Tomcat's startup parameters (Exposes metrics on port 9404)
+              echo 'JAVA_OPTS="$JAVA_OPTS -javaagent:/usr/share/tomcat9/lib/jmx_prometheus_javaagent.jar=9404:/usr/share/tomcat9/lib/tomcat.yml"' | sudo tee -a /etc/default/tomcat9
+              
+              # Restart Tomcat to apply the telemetry agent
+              sudo systemctl restart tomcat9
+
+              # 5. Install OpenTelemetry Collector Contrib
               wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.98.0/otelcol-contrib_0.98.0_linux_amd64.deb
               sudo dpkg -i otelcol-contrib_0.98.0_linux_amd64.deb
               EOF
