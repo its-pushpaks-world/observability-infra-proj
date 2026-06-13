@@ -1,32 +1,122 @@
-# observability-infra-proj
+# Observability Infrastructure Project
 
-This repository contains the root Terraform configuration to provision the foundational network and compute layer for the GitOps observability stack. It consumes the `terraform-modules` repository to deploy a VPC, subnets, and two EC2 instances: the Observability Hub and the Tomcat Application Node.
+Terraform-based infrastructure deployment for a complete observability platform on AWS.
 
-## Prerequisites
-* AWS CLI configured with appropriate credentials.
-* Terraform (`>= 1.5.0`) installed locally.
-* An existing AWS SSH Key Pair.
+## Project Overview
+
+This repository provisions the foundational AWS infrastructure required for an end-to-end observability platform.
+
+The deployment creates:
+
+* AWS VPC
+* Public Subnet
+* Internet Gateway
+* Tomcat Application Server
+* Observability Hub Server
+* Security Groups
+* Telemetry Bootstrap Configuration
+
+Infrastructure is provisioned using reusable Terraform modules from the terraform-modules repository.
+
+## Architecture
+
+```text
+                    AWS Cloud
+                         |
+          ---------------------------------
+          |                               |
+   Observability Hub                Tomcat App
+     EC2 Instance                  EC2 Instance
+          |                               |
+     Grafana/Mimir/Loki          OpenTelemetry
+          |                               |
+          -------- Telemetry -------------
+```
+
+## Technologies Used
+
+* Terraform
+* AWS EC2
+* AWS VPC
+* OpenTelemetry
+* Tomcat
+* GitHub
+
+## Repository Structure
+
+```text
+observability-infra-proj/
+└── main.tf
+```
 
 ## Deployment Steps
 
-1. **Initialize Terraform**
-   Downloads the required modules and providers.
-   ```bash
-   terraform init
-   ```
+### Initialize
 
-2. **Review the Execution Plan**
-   ```bash
-   terraform plan
-   ```
+```bash
+terraform init
+```
 
-3. **Deploy the Infrastructure**
-   Deploys the EC2 instances. The `user_data` scripts will automatically install Docker on the Hub node, and Tomcat 9 + OpenTelemetry on the application node.
-   ```bash
-   terraform apply -auto-approve
-   ```
+### Validate
 
-4. **Save the Outputs**
-   Once the deployment finishes, save the generated IP addresses for the backend configuration phase:
-   * `tomcat_public_ip`
-   * `observability_hub_public_ip`
+```bash
+terraform validate
+```
+
+### Plan
+
+```bash
+terraform plan
+```
+
+### Deploy
+
+```bash
+terraform apply -auto-approve
+```
+
+## Outputs
+
+After deployment Terraform returns:
+
+| Output                      |
+| --------------------------- |
+| tomcat_public_ip            |
+| observability_hub_public_ip |
+
+These outputs are used by the GitOps observability repository.
+
+## What Gets Installed Automatically
+
+### Tomcat Node
+
+* Java
+* Tomcat 9
+* JMX Exporter
+* OpenTelemetry Components
+
+### Observability Hub
+
+* Docker
+* Docker Compose
+* Container Runtime
+
+## Skills Demonstrated
+
+* Terraform
+* AWS Infrastructure Automation
+* Infrastructure as Code
+* EC2 Provisioning
+* User Data Automation
+* Observability Architecture
+* GitOps Foundations
+
+## Related Repositories
+
+* terraform-modules
+* gitops-observability-apps
+
+## Author
+
+Pushpak Badadale [itspushpaksworld496@gmail.com]
+DevOps | Cloud | Observability
