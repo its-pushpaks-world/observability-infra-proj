@@ -1,122 +1,171 @@
-# Observability Infrastructure Project
+# ☁️ AWS Infrastructure for Observability Platform
 
-Terraform-based infrastructure deployment for a complete observability platform on AWS.
+Terraform-based infrastructure deployment for a complete Observability Platform on AWS.
 
-## Project Overview
+This repository provisions the AWS infrastructure required for metrics collection, log aggregation, and visualization.
 
-This repository provisions the foundational AWS infrastructure required for an end-to-end observability platform.
+---
 
-The deployment creates:
+## 🚀 What Gets Deployed
 
-* AWS VPC
-* Public Subnet
-* Internet Gateway
-* Tomcat Application Server
-* Observability Hub Server
-* Security Groups
-* Telemetry Bootstrap Configuration
+### Networking
 
-Infrastructure is provisioned using reusable Terraform modules from the terraform-modules repository.
+- VPC
+- Public Subnet
+- Internet Gateway
+- Route Tables
 
-## Architecture
+### Compute
+
+- Observability Hub EC2 Instance
+- Tomcat Application EC2 Instance
+
+### Automated Bootstrap
+
+Observability Hub:
+
+- Docker
+- Docker Compose
+
+Tomcat Node:
+
+- Tomcat 9
+- OpenTelemetry Collector
+- JMX Exporter
+
+---
+
+## 🏛️ Architecture
 
 ```text
                     AWS Cloud
-                         |
-          ---------------------------------
-          |                               |
-   Observability Hub                Tomcat App
-     EC2 Instance                  EC2 Instance
-          |                               |
-     Grafana/Mimir/Loki          OpenTelemetry
-          |                               |
-          -------- Telemetry -------------
+                         │
+        ┌────────────────────────────────┐
+        │                                │
+        ▼                                ▼
+┌─────────────────┐          ┌─────────────────┐
+│ Observability   │          │ Tomcat App      │
+│ Hub             │◄────────►│ Server          │
+│                 │          │                 │
+│ Grafana         │          │ OpenTelemetry   │
+│ Loki            │          │ JMX Exporter    │
+│ Mimir           │          │                 │
+└─────────────────┘          └─────────────────┘
 ```
 
-## Technologies Used
+---
 
-* Terraform
-* AWS EC2
-* AWS VPC
-* OpenTelemetry
-* Tomcat
-* GitHub
+## 🛠️ Technologies Used
 
-## Repository Structure
+- Terraform
+- AWS EC2
+- AWS VPC
+- OpenTelemetry
+- Tomcat
+- Linux
 
-```text
-observability-infra-proj/
-└── main.tf
+---
+
+## 📋 Prerequisites
+
+- AWS CLI configured
+- Terraform >= 1.5
+- Existing AWS Key Pair
+
+Verify AWS access:
+
+```bash
+aws sts get-caller-identity
 ```
 
-## Deployment Steps
+---
 
-### Initialize
+## 🚀 Deployment Steps
+
+### Initialize Terraform
 
 ```bash
 terraform init
 ```
 
-### Validate
-
-```bash
-terraform validate
-```
-
-### Plan
+### Review Changes
 
 ```bash
 terraform plan
 ```
 
-### Deploy
+### Deploy Infrastructure
 
 ```bash
 terraform apply -auto-approve
 ```
 
-## Outputs
+---
 
-After deployment Terraform returns:
+## 📤 Important Outputs
 
-| Output                      |
-| --------------------------- |
-| tomcat_public_ip            |
+Save these values after deployment:
+
+| Output |
+|----------|
+| tomcat_public_ip |
 | observability_hub_public_ip |
 
-These outputs are used by the GitOps observability repository.
+These are required for deploying the observability stack.
 
-## What Gets Installed Automatically
+---
 
-### Tomcat Node
+## ✅ Validation
 
-* Java
-* Tomcat 9
-* JMX Exporter
-* OpenTelemetry Components
+Check outputs:
 
-### Observability Hub
+```bash
+terraform output
+```
 
-* Docker
-* Docker Compose
-* Container Runtime
+Check state:
 
-## Skills Demonstrated
+```bash
+terraform state list
+```
 
-* Terraform
-* AWS Infrastructure Automation
-* Infrastructure as Code
-* EC2 Provisioning
-* User Data Automation
-* Observability Architecture
-* GitOps Foundations
+---
 
-## Related Repositories
+## 🧹 Cleanup
 
-* terraform-modules
-* gitops-observability-apps
+Destroy all resources:
 
-## Author
+```bash
+terraform destroy -auto-approve
+```
 
-Pushpak Badadale [itspushpaksworld496@gmail.com]
-DevOps | Cloud | Observability
+---
+
+## 🎯 Skills Demonstrated
+
+- Terraform
+- Infrastructure as Code
+- AWS Networking
+- EC2 Provisioning
+- Cloud Automation
+- User Data Bootstrapping
+- Observability Foundations
+
+---
+
+## 🔗 Related Repositories
+
+- terraform-modules
+- gitops-observability-apps
+
+---
+
+## 👨‍💻 Author
+
+**Pushpak Badadale**
+
+📧 [Email](mailto:itspushpaksworld496@gmail.com)
+
+💼 [LinkedIn](https://www.linkedin.com/in/pushpak-badadale-492409179)
+
+🐙 [GitHub](https://github.com/its-pushpaks-world)
