@@ -5,7 +5,9 @@ terraform {
   }
 }
 
-provider "aws" { region = "ap-south-1" }
+provider "aws" {
+  region = "ap-south-1"
+}
 
 # 1. Deploy Free Tier Network Layer
 module "network" {
@@ -49,6 +51,14 @@ module "observability_hub" {
               EOF
 }
 
-output "tomcat_public_ip" { value = module.tomcat_node.public_ip }
-output "observability_hub_public_ip" { value = module.observability_hub.public_ip }
-output "observability_hub_private_ip" { value = module.observability_hub.private_ip }
+output "tomcat_public_ip" {
+  value = module.tomcat_node.public_ip
+}
+
+output "observability_hub_public_ip" {
+  value = module.observability_hub.public_ip
+}
+
+output "observability_hub_private_ip" {
+  value = module.observability_hub.private_ip
+}
